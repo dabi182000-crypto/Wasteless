@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wasteless — Investor Pitch Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1e1e1e;
+      --accent: #e63946;
+      --accent2: #ff6b6b;
+      --white: #ffffff;
+      --muted: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    /* ── DECK SHELL ── */
+    .deck {
+      width: 100vw; height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 60px 80px;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.55s cubic-bezier(0.22,1,0.36,1);
+      pointer-events: none;
+      background: var(--bg);
+    }
+    .slide.prev {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    /* ── NAV BAR ── */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 100;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 20px;
+    }
+    .nav-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--white);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+    .dots { display: flex; gap: 6px; align-items: center; }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .dot.active {
+      width: 20px;
+      border-radius: 3px;
+      background: var(--accent);
+    }
+    .slide-counter {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    /* ── SLIDE LABEL ── */
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap-: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(230,57,70,0.12);
+      border: 1px solid rgba(230,57,70,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .hero-stat {
+      font-size: clamp(56px, 8vw, 96px);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .hero-stat span { color: var(--accent); }
+    .slide-title {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+    .slide-sub {
+      font-size: clamp(16px, 2vw, 22px);
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 680px;
+    }
+    .accent-text { color: var(--accent); }
+    .white-text { color: var(--white); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 48px; height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin: 24px 0;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 32px;
+    }
+    .card-sm {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 24px;
+    }
+
+    /* ── ICON CIRCLE ── */
+    .icon-circle {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(230,57,70,0.15);
+      border: 1px solid rgba(230,57,70,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    /* ── GRID HELPERS ── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; width: 100%; }
+    .flex-col { display: flex; flex-direction: column; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .gap-8 { gap: 32px; }
+
+    /* ── BIG NUMBER ── */
+    .big-num {
+      font-size: clamp(40px, 5.5vw, 72px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .big-num-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    /* ── STEP ── */
+    .step-num {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-line {
+      width: 2px;
+      background: rgba(230,57,70,0.25);
+      height: 32px;
+      margin-left: 19px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .bar-track {
+      height: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      overflow: hidden;
+      width: 100%;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    /* ── TAG PILL ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .pill-green {
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #4ade80;
+    }
+    .pill-red {
+      background: rgba(230,57,70,0.12);
+      border: 1px solid rgba(230,57,70,0.3);
+      color: var(--accent2);
+    }
+    .pill-blue {
+      background: rgba(99,102,241,0.12);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+    }
+
+    /* ── QUOTE ── */
+    .quote {
+      font-size: clamp(22px, 3vw, 36px);
+      font-weight: 800;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      border-left: 4px solid var(--accent);
+      padding-left: 24px;
+    }
+
+    /* ── GLOW ── */
+    .glow-red {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+    }
+
+    /* ── KEYBOARD HINT ── */
+    .key-hint {
+      position: fixed;
+      top: 24px; right: 32px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      z-index: 100;
+    }
+    .key-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: inherit;
+      font-size: 10px;
+    }
+
+    /* ── SLIDE-SPECIFIC ── */
+
+    /* S1 Hook */
+    #s1 { text-align: center; }
+    #s1 .glow-red { width: 600px; height: 400px; background: rgba(230,57,70,0.18); top: -80px; left: 50%; transform: translateX(-50%); }
+    #s1 .wasteless-logo {
+      font-size: 13px; font-weight: 800; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 48px;
+    }
+    #s1 .wasteless-logo span { color: var(--accent); }
+
+    /* S2 Problem */
+    #s2 .glow-red { width: 400px; height: 400px; background: rgba(230,57,70,0.12); top: -100px; right: -100px; }
+
+    /* S3 Solution */
+    #s3 { text-align: center; }
+    #s3 .glow-red { width: 700px; height: 300px; background: rgba(230,57,70,0.15); bottom: -50px; left: 50%; transform: translateX(-50%); }
+    .mockup-wrap {
+      display: flex; gap: 20px; align-items: flex-end; justify-content: center;
+      margin-top: 32px;
+    }
+    .mockup {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+    .mockup-vendor { width: 200px; height: 140px; }
+    .mockup-customer { width: 200px; height: 160px; }
+    .mockup-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .mockup-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .mockup-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .mockup-line { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; }
+    .mockup-card { height: 32px; background: rgba(230,57,70,0.15); border-radius: 10px; border: 1px solid rgba(230,57,70,0.2); }
+    .mockup-label {
+      text-align: center; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted); margin-top: 10px;
+    }
+
+    /* S4 How it works */
+
+    /* S5 Market */
+    #s5 .glow-red { width: 500px; height: 500px; background: rgba(230,57,70,0.1); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* S6 Business */
+
+    /* S7 Traction */
+    .timeline-item {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .timeline-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--accent);
+      margin-top: 4px; flex-shrink: 0;
+    }
+    .timeline-line {
+      width: 2px; height: 28px; background: rgba(230,57,70,0.2);
+      margin-left: 5px;
+    }
+
+    /* S8 Snoonu Fit */
+    #s8 .glow-red { width: 500px; height: 500px; background: rgba(230,57,70,0.12); bottom: -100px; right: -100px; }
+
+    /* S9 Team */
+
+    /* S10 Close */
+    #s10 { text-align: center; }
+    #s10 .glow-red { width: 800px; height: 500px; background: rgba(230,57,70,0.2); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    /* QR mock */
+    .qr-mock {
+      width: 96px; height: 96px;
+      background: white;
+      border-radius: 12px;
+      display: grid;
+      grid-template-columns: repeat(5,1fr);
+      gap: 3px;
+      padding: 10px;
+    }
+    .qr-cell {
+      border-radius: 1px;
+      background: #0a0a0a;
+    }
+
+    /* ── FULLSCREEN BTN ── */
+    .fs-btn {
+      position: fixed;
+      top: 24px; left: 32px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 6px 12px;
+      cursor: pointer;
+      z-index: 100;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .fs-btn:hover { color: var(--white); border-color: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+<button class="fs-btn" onclick="toggleFS()">⛶ Fullscreen</button>
+<div class="key-hint"><kbd>←</kbd> <kbd>→</kbd> or click arrows to navigate</div>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 1 — HOOK                            -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide active" id="s1">
+    <div class="glow-red"></div>
+    <div class="wasteless-logo">WASTE<span>LESS</span> · QATAR</div>
+
+    <div class="hero-stat" style="margin-bottom:16px;">
+      <span>1.4M</span> tonnes
+    </div>
+    <div class="hero-stat" style="font-size:clamp(28px,4vw,52px); color:var(--muted); margin-bottom:40px;">
+      of food wasted in Qatar every year.
+    </div>
+
+    <div class="divider" style="margin:0 auto 40px;"></div>
+
+    <div style="font-size:clamp(22px,3vw,38px); font-weight:800; letter-spacing:-0.02em; color:var(--white);">
+      We're turning waste into <span style="color:var(--accent);">revenue.</span>
+    </div>
+
+    <div style="margin-top:48px; display:flex; gap:24px; align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:12px; color:var(--muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:4px;">Presenting to</div>
+        <div style="font-weight:800; font-size:18px; letter-spacing:0.04em;">SNOONU STARTUP FACTORY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 2 — PROBLEM                         -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s2">
+    <div class="glow-red"></div>
+    <div style="max-width:960px; width:100%;">
+      <div class="label">The Problem</div>
+      <div class="slide-title" style="margin-bottom:12px;">
+        Three parties lose.<br/><span class="accent-text">Every single night.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="flex-col gap-4" style="margin-top:8px;">
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle">🍽️</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Restaurants bleed revenue</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">End-of-day surplus is cooked, priced, then thrown in the bin. Pure loss.</div>
+          </div>
+          <div style="margin-left:auto; flex-shrink:0;">
+            <div class="big-num" style="font-size:36px;">~30%</div>
+            <div class="big-num-label">daily waste</div>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle">🛒</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Supermarkets discard fresh stock</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Products nearing expiry are pulled and destroyed, not donated or discounted.</div>
+          </div>
+          <div style="margin-left:auto; flex-shrink:0;">
+            <div class="big-num" style="font-size:36px;">QAR 2B+</div>
+            <div class="big-num-label">lost annually</div>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle">👤</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Consumers pay full price or go without</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Price-conscious residents have no affordable access to quality meals.</div>
+          </div>
+          <div style="margin-left:auto; flex-shrink:0;">
+            <div class="big-num" style="font-size:36px;">50–70%</div>
+            <div class="big-num-label">savings missed</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; text-align:center;">
+        <div class="pill pill-red" style="font-size:13px; padding:8px 20px;">
+          🌙 25% of food prepared during Ramadan goes to waste — every year
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 3 — SOLUTION                        -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s3">
+    <div class="glow-red"></div>
+    <div style="max-width:900px; width:100%; text-align:center;">
+      <div class="label">The Solution</div>
+      <div class="slide-title">
+        Don't waste it. <span class="accent-text">Taste it.</span>
+      </div>
+      <div class="slide-sub" style="margin:16px auto 0; text-align:center;">
+        AI-powered marketplace connecting restaurant & supermarket surplus with customers — at <strong style="color:var(--white);">50–70% discount</strong>.
+      </div>
+      <div class="divider" style="margin:24px auto;"></div>
+
+      <div class="grid-2" style="max-width:700px; margin:0 auto 32px;">
+        <div class="card-sm" style="text-align:left;">
+          <div style="font-size:22px; margin-bottom:8px;">🏪</div>
+          <div style="font-weight:800; font-size:16px; margin-bottom:4px;">Vendor App</div>
+          <div style="color:var(--muted); font-size:13px; line-height:1.5;">List surplus in 30 seconds. AI auto-prices. Zero waste admin.</div>
+        </div>
+        <div class="card-sm" style="text-align:left;">
+          <div style="font-size:22px; margin-bottom:8px;">📱</div>
+          <div style="font-weight:800; font-size:16px; margin-bottom:4px;">Customer App</div>
+          <div style="color:var(--muted); font-size:13px; line-height:1.5;">Browse nearby surprise bags. Reserve in 1 tap. Pick up or get delivered.</div>
+        </div>
+      </div>
+
+      <div class="mockup-wrap">
+        <div style="text-align:center;">
+          <div class="mockup mockup-vendor">
+            <div class="mockup-header">
+              <div class="mockup-dot" style="background:var(--accent);"></div>
+              <div style="font-size:9px; font-weight:700; color:var(--muted); letter-spacing:0.08em;">VENDOR DASHBOARD</div>
+            </div>
+            <div class="mockup-body">
+              <div class="mockup-line" style="width:70%;"></div>
+              <div class="mockup-card"></div>
+              <div class="mockup-line" style="width:50%;"></div>
+            </div>
+          </div>
+          <div class="mockup-label">Vendor</div>
+        </div>
+
+        <div style="align-self:center; color:var(--accent); font-size:28px; font-weight:900; padding: 0 8px;">⟺</div>
+
+        <div style="text-align:center;">
+          <div class="mockup mockup-customer">
+            <div class="mockup-header">
+              <div class="mockup-dot" style="background:#4ade80;"></div>
+              <div style="font-size:9px; font-weight:700; color:var(--muted); letter-spacing:0.08em;">CUSTOMER VIEW</div>
+            </div>
+            <div class="mockup-body">
+              <div class="mockup-card"></div>
+              <div class="mockup-card" style="opacity:0.5;"></div>
+              <div class="mockup-line" style="width:60%;"></div>
+            </div>
+          </div>
+          <div class="mockup-label">Customer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 4 — HOW IT WORKS                    -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s4">
+    <div style="max-width:900px; width:100%;">
+      <div class="label">How It Works</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        Simple. Fast. <span class="accent-text">Automated.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div style="display:flex; gap:40px; margin-top:16px; align-items:flex-start;">
+        <div style="flex:1; display:flex; flex-direction:column; gap:0;">
+          <div class="flex-col" style="gap:0;">
+            <div style="display:flex; gap:16px; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <div class="step-num">1</div>
+                <div class="step-line"></div>
+              </div>
+              <div style="padding-bottom:24px;">
+                <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Vendor lists surplus</div>
+                <div style="color:var(--muted); font-size:14px; line-height:1.5;">Photos, quantity, pickup window — done in under 30 seconds. <strong style="color:var(--white);">AI sets the optimal price</strong> based on time, demand, and breakeven floor.</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <div class="step-num">2</div>
+                <div class="step-line"></div>
+              </div>
+              <div style="padding-bottom:24px;">
+                <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Customer browses & reserves</div>
+                <div style="color:var(--muted); font-size:14px; line-height:1.5;">Live feed of nearby surprise bags. Filter by category, distance, price. Reserve with one tap — paid upfront.</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:flex-start;">
+              <div style="display:flex; flex-direction:column; align-items:center;">
+                <div class="step-num">3</div>
+              </div>
+              <div>
+                <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Pickup or delivery — everyone wins</div>
+                <div style="color:var(--muted); font-size:14px; line-height:1.5;">Customer collects with a QR code, or gets it delivered via <strong style="color:var(--white);">Snoonu's existing fleet</strong>. Vendor earns. Waste eliminated.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:0 0 300px; display:flex; flex-direction:column; gap:14px;">
+          <div class="card-sm" style="border-color:rgba(230,57,70,0.3);">
+            <div style="font-size:11px; color:var(--accent); font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">AI Engine</div>
+            <div class="flex-col gap-4">
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">📊</span> Dynamic surge pricing
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">🎯</span> Demand matching
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">🛡️</span> Fraud detection
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">🔔</span> Midnight mystery drops
+              </div>
+            </div>
+          </div>
+          <div class="card-sm">
+            <div style="font-size:11px; color:var(--muted); font-weight:700; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">Fulfillment</div>
+            <div class="flex-col gap-4">
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">🏃</span> Self-pickup (no fee)
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:13px;">
+                <span style="font-size:16px;">🛵</span> Snoonu delivery fleet
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 5 — MARKET OPPORTUNITY              -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s5">
+    <div class="glow-red"></div>
+    <div style="max-width:960px; width:100%;">
+      <div class="label">Market Opportunity</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        Qatar is <span class="accent-text">ready.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="grid-3" style="margin-top:24px; margin-bottom:28px;">
+        <div class="card" style="text-align:center;">
+          <div class="big-num">4,000+</div>
+          <div class="big-num-label">restaurants & supermarkets in Qatar</div>
+          <div style="margin-top:12px;">
+            <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+          </div>
+          <div style="font-size:11px; color:var(--muted); margin-top:6px;">Total Addressable Market</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="big-num">3,000+</div>
+          <div class="big-num-label">existing Snoonu restaurant partners</div>
+          <div style="margin-top:12px;">
+            <div class="bar-track"><div class="bar-fill" style="width:75%;"></div></div>
+          </div>
+          <div style="font-size:11px; color:var(--muted); margin-top:6px;">Serviceable Market (via Snoonu)</div>
+        </div>
+        <div class="card" style="text-align:center; border-color:rgba(230,57,70,0.35); background:rgba(230,57,70,0.06);">
+          <div class="big-num">150</div>
+          <div class="big-num-label">target partners in year 1 (3% penetration)</div>
+          <div style="margin-top:12px;">
+            <div class="bar-track"><div class="bar-fill" style="width:3%;"></div></div>
+          </div>
+          <div style="font-size:11px; color:var(--accent); margin-top:6px; font-weight:700;">Our Beachhead Target</div>
+        </div>
+      </div>
+
+      <div class="card" style="display:flex; align-items:center; justify-content:space-around; gap:24px; flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Qatar Food Service Market</div>
+          <div style="font-size:28px; font-weight:900;">QAR 12B+</div>
+        </div>
+        <div style="width:1px; height:40px; background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Annual Food Waste Value</div>
+          <div style="font-size:28px; font-weight:900; color:var(--accent);">QAR 2B+</div>
+        </div>
+        <div style="width:1px; height:40px; background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Population Growth (2024)</div>
+          <div style="font-size:28px; font-weight:900;">+3.2%</div>
+        </div>
+        <div style="width:1px; height:40px; background:var(--border);"></div>
+        <div style="text-align:center;">
+          <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Too Good To Go Valuation</div>
+          <div style="font-size:28px; font-weight:900;">$1.2B</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 6 — BUSINESS MODEL                  -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s6">
+    <div style="max-width:960px; width:100%;">
+      <div class="label">Business Model</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        Three revenue streams. <span class="accent-text">One flywheel.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="grid-3" style="margin-top:24px; margin-bottom:24px;">
+        <div class="card" style="border-color:rgba(230,57,70,0.3);">
+          <div style="font-size:28px; margin-bottom:12px;">📦</div>
+          <div style="font-weight:800; font-size:17px; margin-bottom:6px;">Transaction Commission</div>
+          <div class="big-num" style="font-size:48px;">7%</div>
+          <div style="color:var(--muted); font-size:13px; margin-top:6px; line-height:1.4;">On every bag sold via the platform. Zero fixed cost to vendors.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:28px; margin-bottom:12px;">🛵</div>
+          <div style="font-weight:800; font-size:17px; margin-bottom:6px;">Delivery Fees</div>
+          <div class="big-num" style="font-size:48px;">6–12</div>
+          <div style="color:var(--muted); font-size:13px; margin-top:6px; line-height:1.4;">QAR per delivery via Snoonu integration. Margin shared.</div>
+        </div>
+        <div class="card">
+          <div style="font-size:28px; margin-bottom:12px;">⭐</div>
+          <div style="font-weight:800; font-size:17px; margin-bottom:6px;">Premium Vendor Plans</div>
+          <div class="big-num" style="font-size:48px;">SaaS</div>
+          <div style="color:var(--muted); font-size:13px; margin-top:6px; line-height:1.4;">Analytics dashboard, auto-scheduling, priority placement.</div>
+        </div>
+      </div>
+
+      <div class="card" style="background:rgba(230,57,70,0.06); border-color:rgba(230,57,70,0.25);">
+        <div style="display:flex; align-items:center; justify-content:space-around; gap:32px; flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Year 1 Monthly Revenue</div>
+            <div style="font-size:32px; font-weight:900; color:var(--accent);">42,000 QAR</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:4px;">@ 3% penetration · 150 partners</div>
+          </div>
+          <div style="font-size:32px; color:rgba(230,57,70,0.4);">→</div>
+          <div style="text-align:center;">
+            <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Year 2 Monthly Revenue</div>
+            <div style="font-size:32px; font-weight:900; color:var(--white);">84,000 QAR</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:4px;">@ 6% penetration · 300 partners</div>
+          </div>
+          <div style="font-size:32px; color:rgba(230,57,70,0.4);">→</div>
+          <div style="text-align:center;">
+            <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">CAC Payback</div>
+            <div style="font-size:32px; font-weight:900; color:var(--white);">&lt; 60 days</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:4px;">Low CAC via Snoonu partner network</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 7 — TRACTION & ROADMAP              -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s7">
+    <div style="max-width:960px; width:100%;">
+      <div class="label">Traction &amp; Roadmap</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        We're not waiting. <span class="accent-text">We're moving.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:20px;">
+        <div class="flex-col gap-4">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent);">Right Now</div>
+
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <div class="pill pill-green">✓ Live</div>
+            <div>
+              <div style="font-weight:700; font-size:15px;">Full working demo built</div>
+              <div style="color:var(--muted); font-size:13px;">Customer + Vendor modes, AI pricing, i18n, dark mode</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <div class="pill pill-green">✓ Live</div>
+            <div>
+              <div style="font-weight:700; font-size:15px;">Tech stack ready to scale</div>
+              <div style="color:var(--muted); font-size:13px;">React + Firebase + Snoonu delivery integration</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:14px; align-items:flex-start;">
+            <div class="pill pill-blue">🤝 Talks</div>
+            <div>
+              <div style="font-weight:700; font-size:15px;">2–3 pilot restaurants in conversations</div>
+              <div style="color:var(--muted); font-size:13px;">Awaiting formal partnership agreements</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-col gap-4">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted);">Roadmap</div>
+
+          <div class="card-sm">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+              <div class="pill pill-red">90 days</div>
+              <div style="font-weight:700; font-size:14px;">Pilot Launch</div>
+            </div>
+            <div class="flex-col" style="gap:6px;">
+              <div style="font-size:13px; color:var(--muted);">→ 10 Snoonu partner restaurants live</div>
+              <div style="font-size:13px; color:var(--muted);">→ 500 customer signups</div>
+              <div style="font-size:13px; color:var(--muted);">→ Prove unit economics</div>
+            </div>
+          </div>
+
+          <div class="card-sm">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+              <div class="pill" style="background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); color:var(--muted);">12 months</div>
+              <div style="font-weight:700; font-size:14px;">Scale</div>
+            </div>
+            <div class="flex-col" style="gap:6px;">
+              <div style="font-size:13px; color:var(--muted);">→ 150 restaurant partners</div>
+              <div style="font-size:13px; color:var(--muted);">→ 10,000 active users</div>
+              <div style="font-size:13px; color:var(--muted);">→ Expand to grocery chains</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 8 — SNOONU FIT                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s8">
+    <div class="glow-red"></div>
+    <div style="max-width:900px; width:100%;">
+      <div class="label">Strategic Fit</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        Why Wasteless strengthens<br/><span class="accent-text">Snoonu's ecosystem.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="flex-col gap-4" style="margin-top:16px;">
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle" style="font-size:24px; width:56px; height:56px;">🔗</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Zero cold start</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Wasteless plugs directly into Snoonu's 3,000+ restaurant partners. No new vendor acquisition needed from day one.</div>
+          </div>
+          <div style="margin-left:auto; padding: 8px 16px; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); border-radius:12px; flex-shrink:0; text-align:center;">
+            <div style="font-weight:800; color:#4ade80; font-size:15px;">Day 1</div>
+            <div style="font-size:11px; color:var(--muted);">ready to launch</div>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle" style="font-size:24px; width:56px; height:56px;">🌱</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">Sustainability brand lift</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Positions Snoonu as Qatar's most eco-conscious platform — critical for Qatar Vision 2030 alignment and press coverage.</div>
+          </div>
+          <div style="margin-left:auto; padding: 8px 16px; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); border-radius:12px; flex-shrink:0; text-align:center;">
+            <div style="font-weight:800; color:#a5b4fc; font-size:15px;">QV2030</div>
+            <div style="font-size:11px; color:var(--muted);">aligned</div>
+          </div>
+        </div>
+
+        <div class="card" style="display:flex; align-items:center; gap:20px;">
+          <div class="icon-circle" style="font-size:24px; width:56px; height:56px;">🎯</div>
+          <div>
+            <div style="font-weight:800; font-size:18px; margin-bottom:4px;">New customer segment unlocked</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Price-sensitive and eco-conscious users who weren't using Snoonu now have a reason to — expanding total active users.</div>
+          </div>
+          <div style="margin-left:auto; padding: 8px 16px; background:rgba(230,57,70,0.1); border:1px solid rgba(230,57,70,0.2); border-radius:12px; flex-shrink:0; text-align:center;">
+            <div style="font-weight:800; color:var(--accent2); font-size:15px;">+Users</div>
+            <div style="font-size:11px; color:var(--muted);">net new</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div class="quote">"We don't compete with Snoonu. We complete it."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 9 — TEAM & ASK                      -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s9">
+    <div style="max-width:900px; width:100%;">
+      <div class="label">Team &amp; The Ask</div>
+      <div class="slide-title" style="margin-bottom:8px;">
+        Built by believers.<br/><span class="accent-text">Backed by conviction.</span>
+      </div>
+      <div class="divider"></div>
+
+      <div class="grid-2" style="margin-top:24px;">
+        <div class="flex-col gap-4">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted);">The Team</div>
+
+          <div class="card">
+            <div style="display:flex; align-items:center; gap:14px; margin-bottom:12px;">
+              <div style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,var(--accent),#7c3aed); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:900;">F</div>
+              <div>
+                <div style="font-weight:800; font-size:16px;">Founder</div>
+                <div style="color:var(--muted); font-size:12px;">CEO & Product Lead</div>
+              </div>
+            </div>
+            <div class="flex-col" style="gap:6px;">
+              <div style="display:flex; align-items:center; gap:8px; font-size:13px;">
+                <span style="color:var(--accent);">▸</span> AI-first product approach
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; font-size:13px;">
+                <span style="color:var(--accent);">▸</span> Full-stack React + Firebase
+              </div>
+              <div style="display:flex; align-items:center; gap:8px; font-size:13px;">
+                <span style="color:var(--accent);">▸</span> Zero-waste mission driven
+              </div>
+            </div>
+          </div>
+
+          <div class="card-sm">
+            <div style="font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">Advisors</div>
+            <div style="color:var(--muted); font-size:13px; font-style:italic;">Recruiting advisors in hospitality, logistics & food tech. First conversations underway.</div>
+          </div>
+        </div>
+
+        <div class="flex-col gap-4">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent);">What We're Asking For</div>
+
+          <div class="card" style="border-color:rgba(230,57,70,0.3); background:rgba(230,57,70,0.05);">
+            <div style="font-size:22px; margin-bottom:12px;">🤝</div>
+            <div style="font-weight:800; font-size:17px; margin-bottom:6px;">Snoonu Partnership</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5;">Access to restaurant partner network + delivery fleet for pilot launch. The single most valuable unlock for Wasteless.</div>
+          </div>
+
+          <div class="card">
+            <div style="font-size:22px; margin-bottom:12px;">💰</div>
+            <div style="font-weight:800; font-size:17px; margin-bottom:6px;">Seed Funding</div>
+            <div style="color:var(--muted); font-size:14px; line-height:1.5; margin-bottom:12px;">To scale from demo to 150 live partners in 12 months — covering team, ops, and marketing.</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <div class="pill pill-green">Hiring: 1 ops, 1 sales</div>
+              <div class="pill pill-blue">Marketing budget</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SLIDE 10 — CLOSE                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="slide" id="s10">
+    <div class="glow-red"></div>
+    <div style="text-align:center; max-width:800px;">
+
+      <div style="font-size:14px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:32px;">
+        WASTELESS · SNOONU STARTUP FACTORY
+      </div>
+
+      <div class="slide-title" style="font-size:clamp(48px,7vw,88px); margin-bottom:24px;">
+        Let's make Qatar<br/><span class="accent-text">wasteless.</span>
+      </div>
+
+      <div class="divider" style="margin: 0 auto 40px;"></div>
+
+      <div style="display:flex; gap:40px; align-items:center; justify-content:center; flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;">Live Demo</div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <!-- QR code placeholder -->
+            <div style="width:96px; height:96px; background:white; border-radius:12px; padding:10px; display:grid; grid-template-columns:repeat(7,1fr); gap:2px;">
+              <div style="background:#0a0a0a; border-radius:1px; grid-column:span 3; grid-row:span 3;"></div>
+              <div style="background:transparent;"></div>
+              <div style="background:#0a0a0a; border-radius:1px; grid-column:span 3; grid-row:span 3;"></div>
+              <div style="background:#0a0a0a; border-radius:1px;"></div>
+              <div style="background:#0a0a0a; border-radius:1px;"></div>
+              <div style="background:#0a0a0a; border-radius:1px; grid-column:span 3; grid-row:span 3;"></div>
+            </div>
+            <div style="font-size:10px; color:var(--muted); letter-spacing:0.06em;">SCAN TO VIEW APP</div>
+          </div>
+        </div>
+
+        <div style="width:1px; height:100px; background:var(--border);"></div>
+
+        <div style="text-align:left;">
+          <div style="font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:16px;">Contact</div>
+          <div class="flex-col gap-4">
+            <div style="display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600;">
+              <span style="color:var(--accent);">@</span>
+              <span>your@email.com</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600;">
+              <span style="color:var(--accent);">🔗</span>
+              <span>github.com/dabi182000-crypto/Wasteless</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; font-size:15px; font-weight:600;">
+              <span style="color:var(--accent);">🇶🇦</span>
+              <span>Doha, Qatar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:56px; display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+        <div class="pill pill-green">✓ Live demo ready</div>
+        <div class="pill pill-blue">🤖 AI-powered pricing</div>
+        <div class="pill pill-red">🇶🇦 Qatar Vision 2030 aligned</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <button class="nav-btn" id="prev-btn" onclick="goPrev()">←</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next-btn" onclick="goNext()">→</button>
+  <span class="slide-counter" id="counter">1 / 10</span>
+</nav>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsEl = document.getElementById('dots');
+  const counterEl = document.getElementById('counter');
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    d.title = `Slide ${i + 1}`;
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= slides.length) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('prev');
+    setTimeout(() => slides[current < idx ? current : idx].classList.remove('prev'), 600);
+
+    const wasLower = idx > current;
+    current = idx;
+
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'prev');
+      if (i === current) s.classList.add('active');
+      else if (wasLower && i < current) s.classList.add('prev');
+    });
+
+    // Update dots
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+    counterEl.textContent = `${current + 1} / ${slides.length}`;
+  }
+
+  function goNext() { goTo(current + 1); }
+  function goPrev() { goTo(current - 1); }
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goNext(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+    if (e.key === 'f' || e.key === 'F') toggleFS();
+  });
+
+  // Touch/swipe
+  let touchX = 0;
+  document.addEventListener('touchstart', e => touchX = e.touches[0].clientX);
+  document.addEventListener('touchend', e => {
+    const delta = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 50) delta > 0 ? goNext() : goPrev();
+  });
+
+  // Fullscreen
+  function toggleFS() {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+    else document.exitFullscreen();
+  }
+
+  // Init
+  slides.forEach((s, i) => { if (i !== 0) s.classList.remove('active'); });
+</script>
+</body>
+</html>
